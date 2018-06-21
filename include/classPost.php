@@ -5,26 +5,16 @@
 class ClassPostType{
 
     public function __construct(){
-        add_action( 'get_sidebar', array($this,'post_type'));
+        add_action( 'init', array($this,'post_type'));
     }
 
     public function post_type()
     {
-        $args = array(
-            'post_type'=> array( 'post', 'page' ),
-            'post_status'=>'publish',
-            'posts_per_page'=>-1,
-        );
+        $post_id = isset($_GET['preview_id']);
 
-        $post = new WP_Query($args);
+        $post = get_post( $post_id );
 
-        if ( $post->have_posts() ) {
-
-
-        } else {
-            esc_html_e( 'Sorry, no posts matched your criteria.' );
-        }
-
+        var_dump($post->ID);
 
     }
 
