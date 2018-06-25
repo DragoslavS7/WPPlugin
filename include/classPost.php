@@ -24,6 +24,8 @@ class ClassPostType{
 
            $post = get_post( $post = TRUE,$_GET['post'] );
 
+           var_dump($post);
+
            $current_user = wp_get_current_user();
            $new_post_author = $current_user->ID;
 
