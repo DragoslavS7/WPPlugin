@@ -17,8 +17,7 @@ class DuplicateButton{
 
     public function reg_post_duplicate(){
 
-        $plugin = $this->init();
-        $plugin->post_type();
+        $this->init();
 
     }
 
