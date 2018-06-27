@@ -13,45 +13,46 @@ class ClassPostType{
 
     function rd_duplicate_post_as_draft(){
 
-           global $wpdb;
-
            $post_id = (isset($_GET['post']) ? absint( $_GET['post'] ) : absint( $_POST['post'] ) );
 
-           $post = get_post( $_GET['post'] );
+           $post = get_posts( $_GET['post'] );
 
            $current_user = wp_get_current_user();
+
            $new_post_author = $current_user->ID;
 
             if (isset( $post ) && $post != null) {
 
-                $args = array(
-                    'comment_status' => $post->comment_status,
-                    'ping_status'    => $post->ping_status,
-                    'post_author'    => $new_post_author,
-                    'post_content'   => $post->post_content,
-                    'post_excerpt'   => $post->post_excerpt,
-                    'post_name'      => $post->post_name,
-                    'post_parent'    => $post->post_parent,
-                    'post_password'  => $post->post_password,
-                    'post_status'    => 'draft',
-                    'post_title'     => $post->post_title,
-                    'post_type'      => $post->post_type,
-                    'to_ping'        => $post->to_ping,
-                    'menu_order'     => $post->menu_order
-                );
+                foreach ($post as $posts){
+                    $args = array(
+                        'comment_status' => $posts->comment_status,
+                        'ping_status'    => $posts->ping_status,
+                        'post_author'    => $new_post_author,
+                        'post_content'   => $posts->post_content,
+                        'post_excerpt'   => $posts->post_excerpt,
+                        'post_name'      => $posts->post_name,
+                        'post_parent'    => $posts->post_parent,
+                        'post_password'  => $posts->post_password,
+                        'rewrite'        => array( 'slug' => 'release' ),
+                        'post_status'    => array('draft'),
+                        'post_title'     => $posts->post_title,
+                        'post_type'      => $posts->post_type,
+                        'to_ping'        => $posts->to_ping,
+                        'menu_order'     => $posts->menu_order
+                    );
 
-                $new_post_id = wp_insert_post( $args );
+                    $new_post_id = wp_insert_post( $args );
 
+                    $taxonomies = get_object_taxonomies($posts->post_type);
 
-                $taxonomies = get_object_taxonomies($post->post_type);
-                foreach ($taxonomies as $taxonomy) {
-                    $post_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
-                    wp_set_object_terms($new_post_id, $post_terms, $taxonomy, false);
+                    $post_terms = wp_get_object_terms($post_id, $taxonomies, array('fields' => 'slugs'));
+
+                    wp_set_object_terms($new_post_id, $post_terms, $taxonomies, array('fields' => 'slugs'));
+
+                    wp_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
+                    die;
                 }
 
-                wp_redirect( admin_url( 'post.php?action=edit&post=' . $new_post_id ) );
-
-                exit;
             } else {
                 wp_die('Post creation failed, could not find original post: ' . $post_id);
             }
