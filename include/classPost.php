@@ -33,7 +33,6 @@ class ClassPostType{
                         'post_name'      => $posts->post_name,
                         'post_parent'    => $posts->post_parent,
                         'post_password'  => $posts->post_password,
-                        'rewrite'        => array( 'slug' => 'release' ),
                         'post_status'    => array('draft'),
                         'post_title'     => $posts->post_title,
                         'post_type'      => $posts->post_type,
